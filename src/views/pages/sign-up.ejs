@@ -35,6 +35,13 @@
     const firebaseConfig = {
       // CS5356 TODO #2
       // Copy your Firebase config here too
+      apiKey: "AIzaSyCulAH7TQjwwC7-9Km43V-x0_OfAqmVTp0",
+      authDomain: "pawpics-cs5356.firebaseapp.com",
+      projectId: "pawpics-cs5356",
+      storageBucket: "pawpics-cs5356.appspot.com",
+      messagingSenderId: "712709984604",
+      appId: "1:712709984604:web:b2e8dbd36488a2b28ff199",
+      measurementId: "G-ZESS6540LN"
     };
 
     const app = firebase.initializeApp(firebaseConfig);
@@ -49,13 +56,34 @@
         const password = event.target.password.value;
 
         // CS5356 TODO #3
-        // Create a new user using the Firebase SDK for Web
-        // Get the users ID token
-        // Start a new session with the users ID token
-        // Redirect the user to the /dashboard
+        // Create a new user using the Firebase SDK for Web       // Get the users ID token        // Start a new session with the users ID token        // Redirect the user to the /dashboard        
+        firebase.auth().createUserWithEmailAndPassword(login, password)
+          .then(async(userCredential) => {            
+            const user = userCredential.user;  
+            const idToken = await user.getIdToken();
 
+             // Start a new session with the users ID token
+             await fetch('/sessionLogin', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ idToken})
+              })
+              .then(() => {
+                console.log('POST sent')
+                // Redirect the user to the /dashboard
+                window.location.href = '/dashboard'
+              });
+                    
+          })
+          .catch((error) => {
+            let errorCode = error.code;
+            let errorMessage = error.message;
+            //alert(errorMessage)
+          });
         return false;
+        
       });
+      
   };
 </script>
 
